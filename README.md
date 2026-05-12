@@ -62,6 +62,36 @@ Use $readme-html-converter to convert the current README.md and project structur
 12. 检查 HTML 是否保留了原始 README 的全部信息，并且体现关键项目结构
 13. 只输出一个单文件 `README.html`，不额外生成模板 HTML、预览 HTML、CSS、JS 或资源文件
 
+## GitHub Pages 部署
+
+这个仓库已经包含 GitHub Pages workflow：`.github/workflows/pages.yml`。
+
+它会在 GitHub Actions 里临时执行：
+
+```bash
+mkdir -p _site
+cp README.html _site/index.html
+```
+
+GitHub Pages 的站点入口必须是 `index.html`、`index.md` 或 `README.md`。为了保持仓库里只有一个 HTML 文件，仓库中继续只保留 `README.html`，部署产物里再临时生成 `index.html`。
+
+启用方式：
+
+1. 打开 GitHub 仓库 `paipaiio/readme.html`
+2. 进入 `Settings`
+3. 左侧选择 `Pages`
+4. 在 `Build and deployment` 里把 `Source` 设为 `GitHub Actions`
+5. 回到 `Actions`，运行或等待 `Deploy README.html to GitHub Pages`
+6. 部署完成后访问 Pages 地址
+
+项目页通常是：
+
+```text
+https://paipaiio.github.io/readme.html/
+```
+
+如果推送到 `main` 后没有立刻生效，等几分钟再刷新。
+
 ## 输出效果
 
 生成的 `README.html` 默认应该具备这些能力：
@@ -104,6 +134,9 @@ JWT_SECRET=replace-with-a-secure-secret
 ├── README.md
 ├── README.html
 ├── LICENSE
+├── .github/
+│   └── workflows/
+│       └── pages.yml
 ├── agents/
 │   └── openai.yaml
 └── references/
@@ -117,6 +150,7 @@ JWT_SECRET=replace-with-a-secure-secret
 | `SKILL.md` | skill 的核心说明，定义何时触发以及执行规则 |
 | `README.md` | 当前仓库的使用说明 |
 | `README.html` | 当前仓库的可交互使用说明 |
+| `.github/workflows/pages.yml` | GitHub Pages 部署流程，把 `README.html` 作为 Pages 首页发布 |
 | `agents/openai.yaml` | skill 在 Codex UI 中展示的元数据 |
 | `references/conversion-checklist.md` | 转换完成前的检查清单 |
 | `LICENSE` | MIT 开源许可证 |
