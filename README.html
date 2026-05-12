@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>README HTML Converter Skill</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #1b2430;
+      --muted: #667085;
+      --line: #d9dee7;
+      --accent: #2463eb;
+      --accent-soft: #e9f0ff;
+      --ok: #087443;
+      --code: #101828;
+      --code-text: #f8fafc;
+      --warn-bg: #fff8ec;
+      --warn-line: #f7bf72;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+    a { color: var(--accent); }
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+    }
+    .shell {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 24px 18px;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+    .brand p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .nav {
+      display: grid;
+      gap: 7px;
+      margin-top: 24px;
+    }
+    .nav a {
+      border-radius: 8px;
+      color: var(--text);
+      padding: 8px 10px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .nav a:hover,
+    .nav a.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .main {
+      min-width: 0;
+      padding: 28px;
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .tags,
+    .tab-list,
+    .pager,
+    .segmented {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .search {
+      width: min(360px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+      background: var(--panel);
+    }
+    .tab-list {
+      margin-bottom: 16px;
+    }
+    button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      padding: 8px 12px;
+    }
+    button:hover {
+      border-color: var(--accent);
+    }
+    button.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .tab-panel,
+    .page {
+      display: none;
+    }
+    .tab-panel.active,
+    .page.active {
+      display: block;
+    }
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      padding: 20px;
+    }
+    .section h2,
+    .section h3 {
+      line-height: 1.25;
+      margin-top: 0;
+      letter-spacing: 0;
+    }
+    .section h2 { font-size: 22px; }
+    .section h3 { font-size: 18px; }
+    .lead {
+      color: var(--muted);
+      font-size: 15px;
+      margin-top: -4px;
+    }
+    .grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfe;
+    }
+    .mini-card strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .code-wrap {
+      position: relative;
+      margin: 14px 0;
+    }
+    pre {
+      background: var(--code);
+      color: var(--code-text);
+      margin: 0;
+      overflow: auto;
+      padding: 16px;
+      border-radius: 8px;
+    }
+    .copy {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      color: #111827;
+      font-size: 12px;
+      padding: 5px 8px;
+    }
+    .table-wrap {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+    }
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      white-space: normal;
+    }
+    th {
+      background: #f1f4f8;
+      font-weight: 700;
+    }
+    .demo {
+      display: grid;
+      grid-template-columns: minmax(250px, 330px) minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .controls {
+      display: grid;
+      gap: 12px;
+    }
+    .control label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .control input,
+    .control select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font: inherit;
+      background: #fff;
+    }
+    .notice {
+      border: 1px solid var(--warn-line);
+      background: var(--warn-bg);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .checklist {
+      display: grid;
+      gap: 8px;
+      padding-left: 0;
+      list-style: none;
+    }
+    .checklist li::before {
+      content: "✓";
+      color: var(--ok);
+      font-weight: 800;
+      margin-right: 8px;
+    }
+    .hidden-by-search {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .main { padding: 18px; }
+      .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+      .grid,
+      .demo {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>README HTML Converter Skill</h1>
+        <p>把 README.md 转成完整、分层、可交互的 README.html。</p>
+      </div>
+      <nav class="nav" aria-label="文档目录">
+        <a href="#overview" class="active">概览</a>
+        <a href="#install">安装</a>
+        <a href="#usage">使用</a>
+        <a href="#output">输出效果</a>
+        <a href="#demo">参数演示</a>
+        <a href="#files">仓库结构</a>
+        <a href="#quality">质量要求</a>
+        <a href="#license">许可证</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="toolbar">
+        <div class="tags">
+          <span class="tag">Codex Skill</span>
+          <span class="tag">README.md</span>
+          <span class="tag">README.html</span>
+          <span class="tag">MIT</span>
+        </div>
+        <input id="search" class="search" type="search" placeholder="搜索使用说明">
+      </div>
+
+      <div class="tab-list" role="tablist" aria-label="说明标签">
+        <button class="active" data-tab-button="intro">概览</button>
+        <button data-tab-button="install">安装与调用</button>
+        <button data-tab-button="design">输出设计</button>
+        <button data-tab-button="repo">文件与验收</button>
+      </div>
+
+      <section id="overview" class="tab-panel active" data-tab-panel="intro">
+        <article class="section" data-search-item>
+          <h2>这个 skill 是做什么的</h2>
+          <p><code>readme-html-converter</code> 是一个 Codex skill，用来把项目里的 <code>README.md</code> 或其他 Markdown 技术文档转换成独立的 <code>README.html</code>。</p>
+          <p>它不是简单把 Markdown 渲染成网页，而是要求生成一个分区分层、分页分标签、带交互能力的技术文档页面，并且必须保留原始 README 里的全部信息。</p>
+        </article>
+
+        <article class="section" data-search-item>
+          <h2>适用场景</h2>
+          <div class="grid">
+            <div class="mini-card"><strong>文档交付</strong>需要把 <code>README.md</code> 转成更适合展示、交付或部署的 <code>README.html</code>。</div>
+            <div class="mini-card"><strong>技术参数多</strong>技术文档里有安装步骤、运行命令、环境变量、部署参数、API 示例或配置项。</div>
+            <div class="mini-card"><strong>需要交互</strong>希望 HTML 文档里提供一键复制命令、参数预览、标签导航、分页阅读和搜索过滤。</div>
+            <div class="mini-card"><strong>面板化说明</strong>希望文档从纯文本说明升级成一个可交互的说明面板。</div>
+          </div>
+        </article>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="install">
+        <article id="install" class="section" data-search-item>
+          <h2>安装方式</h2>
+          <p class="lead">把这个仓库克隆到 Codex 的 skills 目录。</p>
+          <div class="code-wrap">
+            <button class="copy" data-copy-target="#cloneCommand">复制</button>
+            <pre><code id="cloneCommand">git clone git@github.com:paipaiio/readme.html.git "${CODEX_HOME:-$HOME/.codex}/skills/readme-html-converter"</code></pre>
+          </div>
+          <p>如果已经安装过，可以进入 skill 目录更新：</p>
+          <div class="code-wrap">
+            <button class="copy" data-copy-target="#updateCommand">复制</button>
+            <pre><code id="updateCommand">cd "${CODEX_HOME:-$HOME/.codex}/skills/readme-html-converter"
+git pull</code></pre>
+          </div>
+          <p>安装后，在新的 Codex 会话中就可以通过 <code>$readme-html-converter</code> 调用。</p>
+        </article>
+
+        <article id="usage" class="section" data-search-item>
+          <h2>使用方式</h2>
+          <p>在目标项目目录中发出类似请求：</p>
+          <div class="code-wrap">
+            <button class="copy" data-copy-target="#englishPrompt">复制</button>
+            <pre><code id="englishPrompt">Use $readme-html-converter to convert the current README.md into a complete interactive README.html.</code></pre>
+          </div>
+          <p>中文也可以这样说：</p>
+          <div class="code-wrap">
+            <button class="copy" data-copy-target="#chinesePrompt">复制</button>
+            <pre><code id="chinesePrompt">使用 $readme-html-converter，把当前项目的 README.md 转换成 README.html，要求保留全部信息，并做成分区、分页、分标签和可交互的说明页面。</code></pre>
+          </div>
+        </article>
+
+        <article class="section" data-search-item>
+          <h2>默认执行流程</h2>
+          <div class="pager" aria-label="步骤分页">
+            <button class="active" data-page-button="read" data-page-group="flow">读取</button>
+            <button data-page-button="map" data-page-group="flow">整理</button>
+            <button data-page-button="build" data-page-group="flow">生成</button>
+            <button data-page-button="check" data-page-group="flow">检查</button>
+          </div>
+          <div class="page active" data-page="read" data-page-group="flow">
+            <h3>1. 完整读取</h3>
+            <p>完整读取当前目录的 <code>README.md</code>，并盘点标题、段落、列表、表格、代码块、命令、环境变量、参数、链接和图片。</p>
+          </div>
+          <div class="page" data-page="map" data-page-group="flow">
+            <h3>2. 重新组织</h3>
+            <p>把内容重新组织成更适合阅读的 HTML 结构，按概览、安装、使用、配置、部署、FAQ 等主题拆分。</p>
+          </div>
+          <div class="page" data-page="build" data-page-group="flow">
+            <h3>3. 生成页面</h3>
+            <p>在 <code>README.md</code> 同目录生成 <code>README.html</code>，并给命令、配置、API 示例和重要参数增加一键复制按钮。</p>
+          </div>
+          <div class="page" data-page="check" data-page-group="flow">
+            <h3>4. 交互与验收</h3>
+            <p>在存在参数设置的场景里增加简单的交互预览，并检查 HTML 是否保留了原始 README 的全部信息。</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="design">
+        <article id="output" class="section" data-search-item>
+          <h2>输出效果</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>能力</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>分级展示</td><td>按 README 的标题层级组织内容。</td></tr>
+                <tr><td>分标签展示</td><td>按概览、安装、使用、配置、部署、FAQ 等主题拆分标签。</td></tr>
+                <tr><td>分页或步骤展示</td><td>对较长的安装、部署、使用流程做分页或步骤切换。</td></tr>
+                <tr><td>一键复制</td><td>对命令、配置文件、环境变量、JSON、URL 等增加复制按钮。</td></tr>
+                <tr><td>参数交互预览</td><td>用输入框、开关、下拉框等演示参数变化后的配置或命令。</td></tr>
+                <tr><td>搜索过滤</td><td>对内容较多的文档提供快速查找能力。</td></tr>
+                <tr><td>响应式布局</td><td>在手机和桌面端都能正常阅读。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article id="demo" class="section" data-search-item>
+          <h2>参数交互示例</h2>
+          <p>如果 README 中包含类似这些参数：</p>
+          <div class="code-wrap">
+            <button class="copy" data-copy-target="#envExample">复制</button>
+            <pre><code id="envExample">APP_MODE=development
+PORT=3000
+API_BASE_URL=http://localhost:3000
+JWT_SECRET=replace-with-a-secure-secret</code></pre>
+          </div>
+          <p>那么 <code>README.html</code> 里可以提供一个小型交互面板，让用户选择运行模式、端口和接口地址，然后实时生成新的 <code>.env</code> 示例，并提供复制按钮。</p>
+          <div class="demo">
+            <div class="controls">
+              <div class="control">
+                <label for="mode">运行模式</label>
+                <select id="mode" data-demo-input>
+                  <option value="development">development</option>
+                  <option value="test">test</option>
+                  <option value="production">production</option>
+                </select>
+              </div>
+              <div class="control">
+                <label for="port">端口</label>
+                <input id="port" data-demo-input type="number" min="1" max="65535" value="3000">
+              </div>
+              <div class="control">
+                <label for="apiBase">接口地址</label>
+                <input id="apiBase" data-demo-input type="url" value="http://localhost:3000">
+              </div>
+            </div>
+            <div class="code-wrap">
+              <button class="copy" data-copy-target="#livePreview">复制</button>
+              <pre><code id="livePreview"></code></pre>
+            </div>
+          </div>
+          <p class="notice">这个演示不需要连接真实系统，只需要帮助读者理解不同参数设置后的效果。</p>
+        </article>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="repo">
+        <article id="files" class="section" data-search-item>
+          <h2>仓库结构</h2>
+          <div class="code-wrap">
+            <button class="copy" data-copy-target="#tree">复制</button>
+            <pre><code id="tree">.
+├── SKILL.md
+├── README.md
+├── README.html
+├── LICENSE
+├── agents/
+│   └── openai.yaml
+├── assets/
+│   └── readme-html-template.html
+└── references/
+    └── conversion-checklist.md</code></pre>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>文件</th>
+                  <th>作用</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><code>SKILL.md</code></td><td>skill 的核心说明，定义何时触发以及执行规则。</td></tr>
+                <tr><td><code>README.md</code></td><td>当前仓库的使用说明。</td></tr>
+                <tr><td><code>README.html</code></td><td>当前仓库的可交互使用说明。</td></tr>
+                <tr><td><code>agents/openai.yaml</code></td><td>skill 在 Codex UI 中展示的元数据。</td></tr>
+                <tr><td><code>assets/readme-html-template.html</code></td><td>生成交互式 README HTML 时可参考的模板。</td></tr>
+                <tr><td><code>references/conversion-checklist.md</code></td><td>转换完成前的检查清单。</td></tr>
+                <tr><td><code>LICENSE</code></td><td>MIT 开源许可证。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article id="quality" class="section" data-search-item>
+          <h2>质量要求</h2>
+          <ul class="checklist">
+            <li><code>README.html</code> 没有丢失 <code>README.md</code> 的信息。</li>
+            <li>原文中的所有标题、命令、代码块、表格、链接、图片和配置项都被保留。</li>
+            <li>代码块和关键参数都有复制入口。</li>
+            <li>参数演示使用的是 README 中出现过的真实字段，或明确标注为示例值。</li>
+            <li>HTML 可以直接从本地打开，不依赖外部 CDN。</li>
+            <li>移动端不会出现正文或按钮严重溢出。</li>
+          </ul>
+        </article>
+
+        <article id="license" class="section" data-search-item>
+          <h2>许可证</h2>
+          <p>本项目使用 MIT License。详见 <code>LICENSE</code>。</p>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const setActiveTab = (name) => {
+      document.querySelectorAll("[data-tab-button]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.tabButton === name);
+      });
+      document.querySelectorAll("[data-tab-panel]").forEach((panel) => {
+        panel.classList.toggle("active", panel.dataset.tabPanel === name);
+      });
+    };
+
+    document.querySelectorAll("[data-tab-button]").forEach((button) => {
+      button.addEventListener("click", () => setActiveTab(button.dataset.tabButton));
+    });
+
+    document.querySelectorAll("[data-page-button]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const group = button.dataset.pageGroup;
+        const page = button.dataset.pageButton;
+        document.querySelectorAll(`[data-page-group="${group}"]`).forEach((item) => {
+          if (item.dataset.pageButton) {
+            item.classList.toggle("active", item.dataset.pageButton === page);
+          }
+          if (item.dataset.page) {
+            item.classList.toggle("active", item.dataset.page === page);
+          }
+        });
+      });
+    });
+
+    const copyText = async (text) => {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    };
+
+    document.querySelectorAll("[data-copy-target]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const target = document.querySelector(button.dataset.copyTarget);
+        const text = target ? target.innerText : "";
+        await copyText(text);
+        const original = button.textContent;
+        button.textContent = "已复制";
+        setTimeout(() => { button.textContent = original; }, 1200);
+      });
+    });
+
+    const search = document.getElementById("search");
+    search.addEventListener("input", () => {
+      const query = search.value.trim().toLowerCase();
+      document.querySelectorAll("[data-search-item]").forEach((section) => {
+        section.classList.toggle("hidden-by-search", query && !section.innerText.toLowerCase().includes(query));
+      });
+    });
+
+    const updatePreview = () => {
+      const mode = document.getElementById("mode").value;
+      const port = document.getElementById("port").value || "3000";
+      const apiBase = document.getElementById("apiBase").value || "http://localhost:3000";
+      document.getElementById("livePreview").textContent = [
+        `APP_MODE=${mode}`,
+        `PORT=${port}`,
+        `API_BASE_URL=${apiBase}`,
+        "JWT_SECRET=replace-with-a-secure-secret"
+      ].join("\n");
+    };
+
+    document.querySelectorAll("[data-demo-input]").forEach((input) => {
+      input.addEventListener("input", updatePreview);
+      input.addEventListener("change", updatePreview);
+    });
+    updatePreview();
+  </script>
+</body>
+</html>
