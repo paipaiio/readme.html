@@ -4,12 +4,15 @@ Use this checklist before finishing an interactive `README.html`.
 
 ## Source Inventory
 
+- Record the important project tree before converting: source folders, app/server entrypoints, config folders, scripts, deployment files, tests, docs, and static assets.
+- Record key manifest/config files when present: `package.json`, `pyproject.toml`, `requirements.txt`, `Cargo.toml`, `go.mod`, `Dockerfile`, `docker-compose*.yml`, `.env.example`, framework configs, and CI files.
 - Record all headings in order.
 - Count all fenced code blocks and note their languages.
 - Record all tables and row counts.
 - Record all links, image paths, badges, and raw HTML snippets.
 - Record all commands, env vars, config keys, ports, hostnames, URLs, API routes, request fields, and response fields.
 - Record warnings, notes, limitations, TODOs, and troubleshooting items.
+- Record README claims that appear stale or inconsistent with actual project files.
 
 ## HTML Structure
 
@@ -18,6 +21,7 @@ Use this checklist before finishing an interactive `README.html`.
 - Keep source heading order inside each tab unless there is a strong reason to reorder.
 - Use page or step controls for long setup/deploy/use flows.
 - Add tags that help scanning, such as `Required`, `Optional`, `Local`, `Production`, `API`, `Example`, `Warning`.
+- Include a project structure or architecture section when the repository contains meaningful code/config/deployment/test files beyond the README.
 - Keep tables responsive with an overflow wrapper.
 - Keep code blocks readable and copyable.
 - If navigation links point into tabbed, paged, collapsed, or otherwise hidden content, add JavaScript that reveals the containing UI before scrolling.
@@ -44,6 +48,8 @@ Use this checklist before finishing an interactive `README.html`.
 ## Final Verification
 
 - Compare generated navigation against source headings.
+- Confirm the project structure scan is reflected in the HTML when relevant.
+- Confirm actual scripts, entrypoints, env examples, and deployment files are not contradicted by the generated instructions.
 - Compare code block count against source inventory.
 - Compare table count and important rows against source inventory.
 - Click every top-level tab and every page control.

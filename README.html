@@ -291,7 +291,7 @@
     <aside class="sidebar">
       <div class="brand">
         <h1>README HTML Converter Skill</h1>
-        <p>把 README.md 转成完整、分层、可交互的 README.html。</p>
+        <p>读取 README.md 与项目结构，生成完整、分层、可交互的单文件 README.html。</p>
       </div>
       <nav class="nav" aria-label="文档目录">
         <a href="#overview" class="active" data-nav-link>概览</a>
@@ -326,8 +326,8 @@
       <section id="overview" class="tab-panel active" data-tab-panel="intro">
         <article class="section" data-search-item>
           <h2>这个 skill 是做什么的</h2>
-          <p><code>readme-html-converter</code> 是一个 Codex skill，用来把项目里的 <code>README.md</code> 或其他 Markdown 技术文档转换成独立的 <code>README.html</code>。</p>
-          <p>它不是简单把 Markdown 渲染成网页，而是要求生成一个分区分层、分页分标签、带交互能力的技术文档页面，并且必须保留原始 README 里的全部信息。</p>
+          <p><code>readme-html-converter</code> 是一个 Codex skill，用来把项目里的 <code>README.md</code> 和实际项目结构转换成独立的 <code>README.html</code>。</p>
+          <p>它不是简单把 Markdown 渲染成网页，也不是只读取 README。它会先读取 README，再扫描项目结构、入口文件、配置文件、脚本、环境变量样例和部署文件，最后生成一个分区分层、分页分标签、带交互能力的技术文档页面。</p>
         </article>
 
         <article class="section" data-search-item>
@@ -335,6 +335,7 @@
           <div class="grid">
             <div class="mini-card"><strong>文档交付</strong>需要把 <code>README.md</code> 转成更适合展示、交付或部署的 <code>README.html</code>。</div>
             <div class="mini-card"><strong>技术参数多</strong>技术文档里有安装步骤、运行命令、环境变量、部署参数、API 示例或配置项。</div>
+            <div class="mini-card"><strong>结构要真实</strong>希望 HTML 结合真实项目结构展示入口、脚本、配置、部署和测试信息。</div>
             <div class="mini-card"><strong>需要交互</strong>希望 HTML 文档里提供一键复制命令、参数预览、标签导航、分页阅读和搜索过滤。</div>
             <div class="mini-card"><strong>面板化说明</strong>希望文档从纯文本说明升级成一个可交互的说明面板。</div>
           </div>
@@ -363,12 +364,12 @@ git pull</code></pre>
           <p>在目标项目目录中发出类似请求：</p>
           <div class="code-wrap">
             <button class="copy" data-copy-target="#englishPrompt">复制</button>
-            <pre><code id="englishPrompt">Use $readme-html-converter to convert the current README.md into a complete interactive README.html.</code></pre>
+            <pre><code id="englishPrompt">Use $readme-html-converter to convert the current README.md and project structure into one complete interactive README.html.</code></pre>
           </div>
           <p>中文也可以这样说：</p>
           <div class="code-wrap">
             <button class="copy" data-copy-target="#chinesePrompt">复制</button>
-            <pre><code id="chinesePrompt">使用 $readme-html-converter，把当前项目的 README.md 转换成 README.html，要求保留全部信息，并做成分区、分页、分标签和可交互的说明页面。</code></pre>
+            <pre><code id="chinesePrompt">使用 $readme-html-converter，把当前项目的 README.md 和项目结构转换成一个单文件 README.html，要求保留全部信息，并做成分区、分页、分标签和可交互的说明页面。</code></pre>
           </div>
         </article>
 
@@ -382,11 +383,11 @@ git pull</code></pre>
           </div>
           <div class="page active" data-page="read" data-page-group="flow">
             <h3>1. 完整读取</h3>
-            <p>完整读取当前目录的 <code>README.md</code>，并盘点标题、段落、列表、表格、代码块、命令、环境变量、参数、链接和图片。</p>
+            <p>完整读取当前目录的 <code>README.md</code>，再扫描项目结构，重点查看入口文件、配置文件、脚本、环境变量样例、部署文件、测试目录和已有 docs。</p>
           </div>
           <div class="page" data-page="map" data-page-group="flow">
-            <h3>2. 重新组织</h3>
-            <p>把内容重新组织成更适合阅读的 HTML 结构，按概览、安装、使用、配置、部署、FAQ 等主题拆分。</p>
+            <h3>2. 校验整理</h3>
+            <p>盘点 README 内容，并用真实项目文件校验运行命令、配置项、入口和部署说明；发现冲突时保留 README 说法，同时标注项目文件证据。</p>
           </div>
           <div class="page" data-page="build" data-page-group="flow">
             <h3>3. 生成页面</h3>
@@ -394,7 +395,7 @@ git pull</code></pre>
           </div>
           <div class="page" data-page="check" data-page-group="flow">
             <h3>4. 交互与验收</h3>
-            <p>在存在参数设置的场景里增加简单的交互预览，并检查 HTML 是否保留了原始 README 的全部信息。</p>
+            <p>在存在参数设置的场景里增加简单的交互预览，并检查 HTML 是否保留了原始 README 的全部信息、体现关键项目结构。</p>
           </div>
         </article>
       </section>
@@ -412,6 +413,7 @@ git pull</code></pre>
               </thead>
               <tbody>
                 <tr><td>分级展示</td><td>按 README 的标题层级组织内容。</td></tr>
+                <tr><td>项目结构展示</td><td>基于实际文件树展示入口、脚本、配置、部署、测试和 docs。</td></tr>
                 <tr><td>分标签展示</td><td>按概览、安装、使用、配置、部署、FAQ 等主题拆分标签。</td></tr>
                 <tr><td>分页或步骤展示</td><td>对较长的安装、部署、使用流程做分页或步骤切换。</td></tr>
                 <tr><td>一键复制</td><td>对命令、配置文件、环境变量、JSON、URL 等增加复制按钮。</td></tr>
@@ -501,6 +503,8 @@ JWT_SECRET=replace-with-a-secure-secret</code></pre>
           <h2>质量要求</h2>
           <ul class="checklist">
             <li><code>README.html</code> 没有丢失 <code>README.md</code> 的信息。</li>
+            <li>已扫描项目结构，并把关键入口、脚本、配置、部署文件和测试信息体现在 HTML 中。</li>
+            <li>README 中的命令、配置、入口和部署说明尽量与真实项目文件交叉校验。</li>
             <li>原文中的所有标题、命令、代码块、表格、链接、图片和配置项都被保留。</li>
             <li>代码块和关键参数都有复制入口。</li>
             <li>左侧目录、标签页和分页之间能正确联动，不能出现目录点了但内容仍在隐藏标签页里的情况。</li>

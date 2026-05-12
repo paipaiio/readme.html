@@ -1,4 +1,4 @@
 interface:
   display_name: "README HTML Converter"
   short_description: "Turn README.md into interactive HTML docs"
-  default_prompt: "Use $readme-html-converter to convert the current README.md into a complete interactive README.html."
+  default_prompt: "Use $readme-html-converter to convert the current README.md and project structure into one complete interactive README.html."

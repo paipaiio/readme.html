@@ -1,13 +1,13 @@
 ---
 name: readme-html-converter
-description: Convert README.md or other Markdown technical documentation into a standalone interactive README.html while preserving all source information. Use when the user asks to turn README/readme/Markdown docs into HTML with hierarchical sections, page-like navigation, tabs, labels, copy buttons, configuration parameter previews, or interactive documentation UI. 适用于把技术文档从 Markdown 改成分区分层的 HTML，并加入参数演示、一键复制、分页和标签式阅读体验。
+description: Convert README.md or other Markdown technical documentation plus the surrounding project structure into a standalone interactive README.html while preserving all source information. Use when the user asks to turn README/readme/Markdown docs into HTML with hierarchical sections, page-like navigation, tabs, labels, copy buttons, project structure summaries, configuration parameter previews, or interactive documentation UI. 适用于读取 README 与整个项目结构后，把技术文档从 Markdown 改成分区分层的单文件 HTML，并加入参数演示、一键复制、分页和标签式阅读体验。
 ---
 
 # README HTML Converter
 
 ## Goal
 
-Create a polished `README.html` from `README.md` or another Markdown technical document. Preserve every piece of source information, then reorganize it into a clearer interactive document with hierarchy, tabs, page sections, copy actions, and configuration previews.
+Create a polished `README.html` from `README.md` or another Markdown technical document plus the surrounding project structure. Preserve every piece of source information, verify it against actual project files, then reorganize it into a clearer interactive document with hierarchy, tabs, page sections, copy actions, project structure summaries, and configuration previews.
 
 ## Default Output
 
@@ -20,7 +20,11 @@ Create a polished `README.html` from `README.md` or another Markdown technical d
 ## Workflow
 
 1. Read the full source Markdown before editing.
-2. Build an information inventory:
+2. Scan the project structure before designing the HTML:
+   - use `rg --files` when available
+   - ignore generated or dependency folders such as `.git`, `node_modules`, `dist`, `build`, `.next`, `coverage`, `vendor`, `.venv`, `venv`, `__pycache__`, and `DerivedData`
+   - inspect key manifests and configs when present: `package.json`, `pyproject.toml`, `requirements.txt`, `Cargo.toml`, `go.mod`, `pom.xml`, `build.gradle`, `Dockerfile`, `docker-compose.yml`, `Makefile`, `.env.example`, framework configs, route/app directories, tests, and deployment files
+3. Build an information inventory:
    - headings and hierarchy
    - paragraphs and notes
    - lists and checklists
@@ -29,25 +33,57 @@ Create a polished `README.html` from `README.md` or another Markdown technical d
    - environment variables, config keys, ports, URLs, credentials placeholders
    - screenshots, image links, badges, external links
    - install, run, deploy, troubleshooting, FAQ, license, contribution sections
-3. Create a content map that keeps all source information but improves navigation:
+   - observed project directories, entrypoints, run scripts, build scripts, tests, API/routes, env examples, deployment files, and static assets
+4. Reconcile README content with project evidence:
+   - use README as the primary source for user-facing intent
+   - use project files to verify commands, scripts, entrypoints, environment variables, framework, and deployment details
+   - if README and project evidence conflict, do not silently overwrite one with the other; preserve the README claim and add a clear note such as `README says ...; project files show ...`
+   - do not invent behavior from file names alone; mark inferred structure as observed evidence
+5. Create a content map that keeps all source information but improves navigation:
    - top-level tabs for major document areas
    - page-like sections inside long tabs
    - side table of contents for quick jumps
    - tags for content type, such as `Install`, `Config`, `API`, `Deploy`, `Troubleshooting`
-4. Implement `README.html` as a single self-contained file with inline CSS and JavaScript.
-5. Add interaction for real user tasks, not decoration:
+   - a project structure or architecture section when the repo contains meaningful source/config/deploy/test files
+6. Implement `README.html` as a single self-contained file with inline CSS and JavaScript.
+7. Add interaction for real user tasks, not decoration:
    - copy buttons for commands, code blocks, env examples, URLs, JSON payloads, and important parameters
    - tabs for major areas
    - pagination or step navigation for long flows
    - collapsible advanced details
    - search/filter for dense docs when helpful
    - parameter preview panels for configurable systems
-6. Verify no source content was lost.
+8. Verify no source content was lost and the generated page reflects both README content and relevant project structure.
+
+## Project Structure Reading
+
+Always inspect the actual project around the README unless the user explicitly asks for README-only conversion.
+
+Prioritize these files and directories:
+
+- manifest/package files: `package.json`, `pnpm-workspace.yaml`, `pyproject.toml`, `requirements.txt`, `Cargo.toml`, `go.mod`, `pom.xml`, `build.gradle`
+- runtime entrypoints: `src/`, `app/`, `pages/`, `server/`, `main.*`, `index.*`, route files, CLI entry files
+- configuration: `.env.example`, `.env.sample`, `config/`, `vite.config.*`, `next.config.*`, `tsconfig.json`, `tailwind.config.*`
+- deployment: `Dockerfile`, `docker-compose*.yml`, `vercel.json`, `netlify.toml`, `nginx*.conf`, CI workflows
+- tests and quality: `tests/`, `__tests__/`, `spec/`, lint/test scripts, coverage config
+- existing docs: `docs/`, `CHANGELOG`, `CONTRIBUTING`, API docs
+
+Use the scan to improve the HTML:
+
+- add a project structure section with a concise tree of important paths
+- add run/build/test/deploy command blocks from actual scripts when available
+- add config and env panels from actual examples and config files
+- add API/route summaries only when routes are visible or documented
+- add warnings for missing files, stale README commands, or undocumented required setup
+
+Keep the scan bounded. For large repositories, summarize important folders and inspect representative entry/config files instead of reading every source file.
 
 ## Content Preservation Rules
 
 - Do not summarize away information from the README.
 - Do not replace specific commands, paths, env names, ports, or API fields with generic wording.
+- Do not ignore actual project structure. The HTML should show meaningful project files, entrypoints, scripts, configs, and deployment evidence when present.
+- Do not present project-structure inferences as confirmed behavior unless source files or docs support them.
 - If a section is awkward, preserve the text and wrap it in a better UI block instead of deleting it.
 - Keep all links and images. If an image path is relative, keep the same relative path unless the HTML output location changes.
 - Preserve code block languages where known, such as `bash`, `json`, `ts`, `js`, `python`, `sql`, or `yaml`.
@@ -128,6 +164,8 @@ Read `references/conversion-checklist.md` when doing a substantial conversion or
 - every table appears with the same rows and columns
 - every link target is preserved
 - every config key/env var/CLI flag/API field is preserved
+- the project structure was scanned and important manifests, entrypoints, scripts, env examples, deployment files, and tests are represented when present
+- README commands and setup claims were checked against actual project files where possible
 - every navigation item works, including links whose targets start inside inactive tabs or pages
 - hash deep links such as `README.html#config` open the correct section instead of landing on a hidden panel
 - parameter demos use values derived from the README or clearly marked examples
