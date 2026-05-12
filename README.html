@@ -298,6 +298,7 @@
         <a href="#install" data-nav-link>安装</a>
         <a href="#usage" data-nav-link>使用</a>
         <a href="#output" data-nav-link>输出效果</a>
+        <a href="#source-safety" data-nav-link>来源安全</a>
         <a href="#demo" data-nav-link>参数演示</a>
         <a href="#files" data-nav-link>仓库结构</a>
         <a href="#quality" data-nav-link>质量要求</a>
@@ -328,6 +329,7 @@
           <h2>这个 skill 是做什么的</h2>
           <p><code>readme-html-converter</code> 是一个 Codex skill，用来把项目里的 <code>README.md</code> 和实际项目结构转换成独立的 <code>README.html</code>。</p>
           <p>它不是简单把 Markdown 渲染成网页，也不是只读取 README。它会先读取 README，再扫描项目结构、入口文件、配置文件、脚本、环境变量样例和部署文件，最后生成一个分区分层、分页分标签、带交互能力的技术文档页面。</p>
+          <p>生成页面需要标出信息来源、提示 README 与项目文件的冲突，并对真实密钥、token、数据库密码等敏感信息做脱敏处理。</p>
         </article>
 
         <article class="section" data-search-item>
@@ -336,6 +338,8 @@
             <div class="mini-card"><strong>文档交付</strong>需要把 <code>README.md</code> 转成更适合展示、交付或部署的 <code>README.html</code>。</div>
             <div class="mini-card"><strong>技术参数多</strong>技术文档里有安装步骤、运行命令、环境变量、部署参数、API 示例或配置项。</div>
             <div class="mini-card"><strong>结构要真实</strong>希望 HTML 结合真实项目结构展示入口、脚本、配置、部署和测试信息。</div>
+            <div class="mini-card"><strong>来源要清楚</strong>希望区分信息来自 README、manifest、配置文件、部署文件还是项目扫描。</div>
+            <div class="mini-card"><strong>安全要默认</strong>希望发现冲突并自动隐藏真实密钥、token、数据库密码等敏感信息。</div>
             <div class="mini-card"><strong>需要交互</strong>希望 HTML 文档里提供一键复制命令、参数预览、标签导航、分页阅读和搜索过滤。</div>
             <div class="mini-card"><strong>面板化说明</strong>希望文档从纯文本说明升级成一个可交互的说明面板。</div>
           </div>
@@ -388,6 +392,7 @@ git pull</code></pre>
           <div class="page" data-page="map" data-page-group="flow">
             <h3>2. 校验整理</h3>
             <p>盘点 README 内容，并用真实项目文件校验运行命令、配置项、入口和部署说明；发现冲突时保留 README 说法，同时标注项目文件证据。</p>
+            <p>关键事实需要带来源标记，例如 <code>README</code>、<code>package.json</code>、<code>.env.example</code>、<code>Dockerfile</code>、<code>Observed</code>。</p>
           </div>
           <div class="page" data-page="build" data-page-group="flow">
             <h3>3. 生成页面</h3>
@@ -395,7 +400,7 @@ git pull</code></pre>
           </div>
           <div class="page" data-page="check" data-page-group="flow">
             <h3>4. 交互与验收</h3>
-            <p>在存在参数设置的场景里增加简单的交互预览，并检查 HTML 是否保留了原始 README 的全部信息、体现关键项目结构。</p>
+            <p>在存在参数设置的场景里增加简单的交互预览，并检查 HTML 是否保留了原始 README 的全部信息、体现关键项目结构、没有泄露真实敏感信息。</p>
           </div>
         </article>
       </section>
@@ -414,6 +419,10 @@ git pull</code></pre>
               <tbody>
                 <tr><td>分级展示</td><td>按 README 的标题层级组织内容。</td></tr>
                 <tr><td>项目结构展示</td><td>基于实际文件树展示入口、脚本、配置、部署、测试和 docs。</td></tr>
+                <tr><td>扫描摘要</td><td>展示识别到的技术栈、入口、脚本、配置、部署文件和测试目录。</td></tr>
+                <tr><td>来源标记</td><td>标出信息来自 README、配置文件、manifest、部署文件或项目扫描。</td></tr>
+                <tr><td>冲突提示</td><td>README 与真实项目文件不一致时显示警告。</td></tr>
+                <tr><td>敏感信息脱敏</td><td>不展示真实 <code>.env</code>、token、私钥、数据库密码等内容。</td></tr>
                 <tr><td>分标签展示</td><td>按概览、安装、使用、配置、部署、FAQ 等主题拆分标签。</td></tr>
                 <tr><td>分页或步骤展示</td><td>对较长的安装、部署、使用流程做分页或步骤切换。</td></tr>
                 <tr><td>一键复制</td><td>对命令、配置文件、环境变量、JSON、URL 等增加复制按钮。</td></tr>
@@ -423,6 +432,17 @@ git pull</code></pre>
               </tbody>
             </table>
           </div>
+        </article>
+
+        <article id="source-safety" class="section" data-search-item>
+          <h2>来源与安全规则</h2>
+          <div class="grid">
+            <div class="mini-card"><strong>来源标记</strong>命令、配置、入口、部署说明和项目结构摘要要标明来自 <code>README</code>、<code>package.json</code>、<code>.env.example</code>、<code>Dockerfile</code> 或项目扫描。</div>
+            <div class="mini-card"><strong>冲突提示</strong>如果 README 写了 <code>npm start</code>，但 <code>package.json</code> 没有 <code>start</code>，HTML 应该显示明确警告，而不是静默改写。</div>
+            <div class="mini-card"><strong>敏感脱敏</strong>真实 <code>.env</code>、token、私钥、cookie、数据库密码和生产凭据不能展示，也不能被复制按钮复制。</div>
+            <div class="mini-card"><strong>扫描边界</strong>大型项目只总结关键入口、manifest、配置、路由、部署、测试和 docs，不读取生成物、依赖目录和缓存。</div>
+          </div>
+          <p class="notice">如果某个配置值只在敏感文件里出现，页面只展示变量名和安全占位符，例如 <code>replace-with-a-secure-secret</code>。</p>
         </article>
 
         <article id="demo" class="section" data-search-item>
@@ -505,12 +525,16 @@ JWT_SECRET=replace-with-a-secure-secret</code></pre>
             <li><code>README.html</code> 没有丢失 <code>README.md</code> 的信息。</li>
             <li>已扫描项目结构，并把关键入口、脚本、配置、部署文件和测试信息体现在 HTML 中。</li>
             <li>README 中的命令、配置、入口和部署说明尽量与真实项目文件交叉校验。</li>
+            <li>关键事实有来源标记或来源说明。</li>
+            <li>README 与项目文件冲突的地方有可见提示。</li>
+            <li>真实密钥、token、数据库密码、私钥等敏感信息不会出现在 HTML 或复制内容里。</li>
             <li>原文中的所有标题、命令、代码块、表格、链接、图片和配置项都被保留。</li>
             <li>代码块和关键参数都有复制入口。</li>
             <li>左侧目录、标签页和分页之间能正确联动，不能出现目录点了但内容仍在隐藏标签页里的情况。</li>
             <li>直接打开 <code>README.html#某个章节</code> 时，页面能自动显示对应标签页并定位到章节。</li>
             <li>生成结果只有一个单文件 <code>README.html</code>，CSS 和 JavaScript 都内联在这个文件里。</li>
             <li>参数演示使用的是 README 中出现过的真实字段，或明确标注为示例值。</li>
+            <li>交互控件可以通过键盘访问，并有清晰的激活和反馈状态。</li>
             <li>HTML 可以直接从本地打开，不依赖外部 CDN。</li>
             <li>移动端不会出现正文或按钮严重溢出。</li>
           </ul>
