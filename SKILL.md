@@ -12,7 +12,7 @@ Create a polished `README.html` from `README.md` or another Markdown technical d
 ## Default Output
 
 - Write `README.html` next to the source README unless the user gives another destination.
-- Make the HTML standalone: inline CSS and vanilla JavaScript by default, with no CDN dependency.
+- Produce exactly one standalone HTML file: inline CSS and vanilla JavaScript in `README.html`, with no extra `.html`, `.css`, `.js`, asset, preview, template, or companion output files unless the user explicitly asks for them.
 - Keep the original Markdown file unchanged unless the user explicitly asks to edit it.
 - Use ASCII unless the source document or required visible Chinese text already uses non-ASCII.
 - Prefer semantic HTML: `header`, `nav`, `main`, `section`, `article`, `table`, `code`, `pre`.
@@ -34,7 +34,7 @@ Create a polished `README.html` from `README.md` or another Markdown technical d
    - page-like sections inside long tabs
    - side table of contents for quick jumps
    - tags for content type, such as `Install`, `Config`, `API`, `Deploy`, `Troubleshooting`
-4. Implement `README.html` using the template pattern in `assets/readme-html-template.html` when useful.
+4. Implement `README.html` as a single self-contained file with inline CSS and JavaScript.
 5. Add interaction for real user tasks, not decoration:
    - copy buttons for commands, code blocks, env examples, URLs, JSON payloads, and important parameters
    - tabs for major areas
@@ -64,6 +64,13 @@ Use a document-app layout, not a marketing landing page:
 - Tags: small labels that describe section type or importance.
 - Utility strip: copy all relevant commands/config snippets.
 - Responsive design: mobile should collapse navigation into a compact menu or horizontal tab row.
+
+Navigation must work across hidden UI states:
+
+- If a sidebar/table-of-contents link points to content inside an inactive tab, page, accordion, or collapsed details block, its click handler must first reveal the containing UI state, then scroll to the target.
+- Deep links such as `README.html#demo` must open the correct tab/page on initial load.
+- Do not rely on plain anchor behavior when the target can be hidden with `display: none`.
+- Keep active states synchronized between sidebar links and top-level tabs after navigation.
 
 Keep visual styling restrained and technical:
 
@@ -121,10 +128,12 @@ Read `references/conversion-checklist.md` when doing a substantial conversion or
 - every table appears with the same rows and columns
 - every link target is preserved
 - every config key/env var/CLI flag/API field is preserved
+- every navigation item works, including links whose targets start inside inactive tabs or pages
+- hash deep links such as `README.html#config` open the correct section instead of landing on a hidden panel
 - parameter demos use values derived from the README or clearly marked examples
 - the HTML works by opening it directly in a browser
 - mobile width does not hide essential navigation or overflow text
 
 ## When Source README Is Missing
 
-If no README exists in the target directory, do not invent project documentation. Tell the user the source file is missing and offer to create a skill/template-only artifact or to generate README content from the repo after inspection.
+If no README exists in the target directory, do not invent project documentation. Tell the user the source file is missing and offer to generate README content from the repo after inspection.

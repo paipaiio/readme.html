@@ -51,6 +51,7 @@ Use $readme-html-converter to convert the current README.md into a complete inte
 5. 给命令、配置、API 示例和重要参数增加一键复制按钮
 6. 在存在参数设置的场景里增加简单的交互预览
 7. 检查 HTML 是否保留了原始 README 的全部信息
+8. 只输出一个单文件 `README.html`，不额外生成模板 HTML、预览 HTML、CSS、JS 或资源文件
 
 ## 输出效果
 
@@ -91,8 +92,6 @@ JWT_SECRET=replace-with-a-secure-secret
 ├── LICENSE
 ├── agents/
 │   └── openai.yaml
-├── assets/
-│   └── readme-html-template.html
 └── references/
     └── conversion-checklist.md
 ```
@@ -105,7 +104,6 @@ JWT_SECRET=replace-with-a-secure-secret
 | `README.md` | 当前仓库的使用说明 |
 | `README.html` | 当前仓库的可交互使用说明 |
 | `agents/openai.yaml` | skill 在 Codex UI 中展示的元数据 |
-| `assets/readme-html-template.html` | 生成交互式 README HTML 时可参考的模板 |
 | `references/conversion-checklist.md` | 转换完成前的检查清单 |
 | `LICENSE` | MIT 开源许可证 |
 
@@ -116,6 +114,9 @@ JWT_SECRET=replace-with-a-secure-secret
 - `README.html` 没有丢失 `README.md` 的信息
 - 原文中的所有标题、命令、代码块、表格、链接、图片和配置项都被保留
 - 代码块和关键参数都有复制入口
+- 左侧目录、标签页和分页之间能正确联动，不能出现目录点了但内容仍在隐藏标签页里的情况
+- 直接打开 `README.html#某个章节` 时，页面能自动显示对应标签页并定位到章节
+- 生成结果只有一个单文件 `README.html`，CSS 和 JavaScript 都内联在这个文件里
 - 参数演示使用的是 README 中出现过的真实字段，或明确标注为示例值
 - HTML 可以直接从本地打开，不依赖外部 CDN
 - 移动端不会出现正文或按钮严重溢出

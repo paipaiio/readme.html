@@ -20,6 +20,9 @@ Use this checklist before finishing an interactive `README.html`.
 - Add tags that help scanning, such as `Required`, `Optional`, `Local`, `Production`, `API`, `Example`, `Warning`.
 - Keep tables responsive with an overflow wrapper.
 - Keep code blocks readable and copyable.
+- If navigation links point into tabbed, paged, collapsed, or otherwise hidden content, add JavaScript that reveals the containing UI before scrolling.
+- Support initial hash URLs such as `README.html#deploy` by activating the correct tab/page on load.
+- Produce one self-contained HTML file only. Inline CSS and JavaScript in `README.html`; do not create extra `.html`, `.css`, `.js`, preview, template, or asset files unless explicitly requested.
 
 ## Interaction
 
@@ -44,7 +47,10 @@ Use this checklist before finishing an interactive `README.html`.
 - Compare code block count against source inventory.
 - Compare table count and important rows against source inventory.
 - Click every top-level tab and every page control.
+- Click every sidebar/table-of-contents link, especially links to sections inside inactive tabs or pages.
+- Open at least one hash deep link directly and confirm the right tab/page becomes visible.
 - Test at least one copy button.
 - Change every parameter demo control and confirm the preview updates.
 - Open the HTML directly from disk or through the project dev server.
+- Confirm the conversion did not create any companion output files beside the single requested HTML file.
 - Check a narrow viewport for text overflow and hidden controls.
